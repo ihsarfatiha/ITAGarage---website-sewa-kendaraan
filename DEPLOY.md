@@ -37,7 +37,7 @@ git push
 
 1. Buka <https://render.com> → **Sign up** pakai akun GitHub (gratis, tanpa kartu kredit).
 2. Pilih **New** → **Blueprint**.
-3. Pilih repo `ihsarfatiha/ITAGarage` → **Connect**.
+3. Pilih repo `ihsarfatiha/ITAGarage---website-sewa-kendaraan` → **Connect**.
 4. Render akan membaca `render.yaml` dan menampilkan 2 resource:
    - `itagarage` (Free web service)
    - `itagarage-db` (Free Postgres)
@@ -99,6 +99,13 @@ git push
    (6 motor, 6 mobil, 12 review, 4 user). Kalau ada data asli yang mau dibawa,
    beri tahu saya — perlu langkah ekspor-impor terpisah.
 
+5. **GitHub Pages di repo ini sebaiknya dimatikan.** Alamat
+   `https://ihsarfatiha.github.io/ITAGarage---website-sewa-kendaraan/` sekarang
+   menampilkan README Laravel bawaan, bukan web aplikasinya, karena Pages hanya
+   bisa menyajikan file statis dan repo ini isinya PHP. Cara mematikan:
+   repo → **Settings** → **Pages** → **Source: None** → **Save**.
+   Alamat web yang benar nanti adalah alamat dari Render.
+
 ---
 
 ## Alternatif: Railway (kalau ingin MySQL)
@@ -107,7 +114,7 @@ Railway cocok kalau kamu ingin tetap pakai MySQL seperti di lokal, dan Dockerfil
 yang sudah dibuat bisa langsung dipakai.
 
 1. <https://railway.com> → login pakai GitHub
-2. **New Project** → **Deploy from GitHub repo** → pilih `ITAGarage`
+2. **New Project** → **Deploy from GitHub repo** → pilih `ITAGarage---website-sewa-kendaraan`
 3. **Add Variables**, minimal:
    ```
    APP_ENV=production
