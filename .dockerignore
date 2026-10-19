@@ -1,0 +1,38 @@
+# File & folder yang tidak perlu dikirim ke Docker saat build.
+# Ini bikin build lebih cepat dan image lebih kecil.
+
+.git
+.gitattributes
+.github
+.idea
+.vscode
+.fleet
+.editorconfig
+phpunit.xml
+
+# Jangan pernah masukkan rahasia ke image
+.env
+.env.backup
+.env.production
+.env.local
+auth.json
+
+# Dependency di-install ulang di dalam Docker
+node_modules
+vendor
+
+# public/build dibuat ulang oleh tahap Vite di Dockerfile
+public/build
+public/hot
+public/storage
+
+storage/app/public/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
+
+*.log
+.DS_Store
+DEPLOY.md

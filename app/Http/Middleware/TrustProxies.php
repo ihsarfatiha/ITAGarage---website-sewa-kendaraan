@@ -10,9 +10,12 @@ class TrustProxies extends Middleware
     /**
      * The trusted proxies for this application.
      *
+     * Di hosting (Render/Railway) aplikasi berjalan di belakang reverse proxy,
+     * jadi semua proxy dipercaya supaya Laravel tahu koneksi aslinya HTTPS.
+     *
      * @var array<int, string>|string|null
      */
-    protected $proxies;
+    protected $proxies = '*';
 
     /**
      * The headers that should be used to detect proxies.

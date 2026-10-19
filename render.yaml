@@ -1,0 +1,69 @@
+# Blueprint Render: bikin web service + database sekaligus.
+# Cara pakai ada di DEPLOY.md
+services:
+  - type: web
+    name: itagarage
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    region: singapore
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: APP_NAME
+        value: ITAGarage
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        sync: false
+      - key: APP_TIMEZONE
+        value: Asia/Jakarta
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: error
+      - key: FILESYSTEM_DISK
+        value: public
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      # true = isi data contoh kalau tabel users masih kosong
+      - key: RUN_SEEDER
+        value: true
+
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: itagarage-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: itagarage-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: itagarage-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: itagarage-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: itagarage-db
+          property: password
+
+databases:
+  - name: itagarage-db
+    plan: free
+    region: singapore
+    databaseName: itagarage
+    user: itagarage
