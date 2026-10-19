@@ -35,7 +35,12 @@ git push
 
 ## Langkah 2 — Deploy di Render
 
-1. Buka <https://render.com> → **Sign up** pakai akun GitHub (gratis, tanpa kartu kredit).
+> **PENTING:** Render bisa memunculkan dialog **"Add Card — Add credit card to
+> verify your identity"** sebelum deploy. Kalau itu terjadi dan kamu tidak punya
+> kartu kredit, **Render tidak bisa dipakai**. Tutup dialognya dan pindah ke
+> bagian **Kalau tidak punya kartu kredit** di bawah.
+
+1. Buka <https://render.com> → **Sign up** pakai akun GitHub.
 2. Pilih **New** → **Blueprint**.
 3. Pilih repo `ihsarfatiha/ITAGarage---website-sewa-kendaraan` → **Connect**.
 4. Render akan membaca `render.yaml` dan menampilkan 2 resource:
@@ -104,14 +109,97 @@ git push
    menampilkan README Laravel bawaan, bukan web aplikasinya, karena Pages hanya
    bisa menyajikan file statis dan repo ini isinya PHP. Cara mematikan:
    repo → **Settings** → **Pages** → **Source: None** → **Save**.
-   Alamat web yang benar nanti adalah alamat dari Render.
+   Alamat web yang benar adalah alamat dari hosting yang kamu pilih di bawah.
+
+---
+
+## Kalau tidak punya kartu kredit
+
+Render kadang meminta verifikasi kartu sebelum deploy, dan kalau kamu kena ini
+tanpa punya kartu, Render memang tidak bisa dipakai. Jangan dipaksa — pakai
+salah satu jalur berikut. Semuanya **tanpa kartu sama sekali**.
+
+### Jalur A — SnapDeploy + Neon (paling permanen)
+
+Dua layanan, keduanya gratis tanpa kartu dan tanpa batas waktu:
+
+| Bagian | Layanan | Alasan |
+|---|---|---|
+| Aplikasi | SnapDeploy | Langsung membaca `Dockerfile` kita, gratis 100 jam/bulan |
+| Database | Neon | Postgres gratis permanen, 1 GB |
+
+**Langkah 1 — buat database di Neon**
+
+1. <https://neon.com> → **Sign up** (bisa pakai akun GitHub)
+2. **New Project** → beri nama `itagarage` → **Create**
+3. Buka halaman project → **Connect** → pilih tab **Parameters only**
+   (bukan "Connection string")
+4. Catat 4 nilai: `host`, `database`, `user`, `password`
+
+**Langkah 2 — deploy aplikasi di SnapDeploy**
+
+1. <https://snapdeploy.dev> → **Sign up** pakai GitHub
+2. **New Container** → **GitHub repo** → pilih `ITAGarage---website-sewa-kendaraan`
+3. Kalau ditanya port, isi `8080` (sesuai `EXPOSE` di Dockerfile kita)
+4. Tambahkan Environment Variables:
+   ```
+   APP_NAME=ITAGarage
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_KEY=base64:ISI_HASIL_KEY_GENERATE
+   APP_URL=https://<alamat-yang-diberi-snapdeploy>
+   FILESYSTEM_DISK=public
+   SESSION_DRIVER=file
+   CACHE_DRIVER=file
+   QUEUE_CONNECTION=sync
+   RUN_SEEDER=true
+
+   DB_CONNECTION=pgsql
+   DB_HOST=<host dari Neon>
+   DB_PORT=5432
+   DB_DATABASE=<database dari Neon>
+   DB_USERNAME=<user dari Neon>
+   DB_PASSWORD=<password dari Neon>
+   ```
+   `APP_KEY` dibuat dengan perintah: `php artisan key:generate --show`
+5. Deploy, lalu buka **Logs** sampai muncul `==> Siap. Menjalankan Apache...`
+
+Catatan: web gratis SnapDeploy "tidur" setelah 15 menit tidak dipakai dan
+bangun dalam ± 1 menit. Itu normal, bukan error.
+
+### Jalur B — Cloudflare Tunnel (paling cepat, tanpa daftar)
+
+Kalau kamu cuma butuh webnya tampil online sebentar (untuk demo, presentasi,
+atau dikumpulkan), ini yang tercepat. Tidak ada pendaftaran, tidak ada kartu,
+tidak ada biaya.
+
+Syarat: Laragon menyala dan webnya sudah jalan di lokal.
+
+1. Buka Laragon → **Start All** → tes dulu `http://sewamotor.test` bisa dibuka
+2. Download `cloudflared`:
+   <https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/>
+3. Jalankan di PowerShell:
+   ```
+   cloudflared tunnel --url http://sewamotor.test
+   ```
+4. Dalam beberapa detik akan muncul alamat publik seperti
+   `https://xxxx-xxxx.trycloudflare.com` — itulah alamat webnya
+
+Kekurangan: alamat berubah setiap kali dijalankan, dan web hanya hidup selama
+komputermu menyala serta perintah itu masih berjalan.
+
+### Jalur C — Railway (satu platform, langsung ada MySQL)
+
+Lihat bagian **Alternatif: Railway** di bawah. Paket gratisnya tidak butuh
+kartu, dan MySQL sudah disediakan sehingga tidak perlu akun Neon terpisah.
 
 ---
 
 ## Alternatif: Railway (kalau ingin MySQL)
 
 Railway cocok kalau kamu ingin tetap pakai MySQL seperti di lokal, dan Dockerfile
-yang sudah dibuat bisa langsung dipakai.
+yang sudah dibuat bisa langsung dipakai. **Paket gratisnya tidak butuh kartu
+kredit**, dan MySQL sudah disediakan sehingga tidak perlu akun Neon terpisah.
 
 1. <https://railway.com> → login pakai GitHub
 2. **New Project** → **Deploy from GitHub repo** → pilih `ITAGarage---website-sewa-kendaraan`
